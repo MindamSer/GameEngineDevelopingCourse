@@ -6,6 +6,8 @@
 #include <Math/Vector.h>
 #include <Math/Matrix.h>
 
+#include <chrono>
+
 namespace GameEngine
 {
 	namespace Render::HAL
@@ -253,7 +255,11 @@ namespace GameEngine
 			D3D12Mesh d3d12Mesh = *reinterpret_cast<D3D12Mesh*>(mesh.get());
 			D3D12Material d3d12Material = *reinterpret_cast<D3D12Material*>(material.get());
 
-			float mTheta = 1.5f * DirectX::XM_PI;
+			auto now = std::chrono::system_clock::now();
+			auto duration = now.time_since_epoch();
+			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+
+			float mTheta = 2 * 0.0001f * (milliseconds % 10000) * DirectX::XM_PI;
 			float mPhi = DirectX::XM_PIDIV4;
 			float mRadius = 5.0f;
 
