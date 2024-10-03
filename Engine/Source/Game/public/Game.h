@@ -8,6 +8,9 @@
 namespace GameEngine
 {
 	class GameObject;
+	class SinusGameObject;
+	class GravityGameObject;
+	class ControlGameObject;
 
 	class Game final
 	{

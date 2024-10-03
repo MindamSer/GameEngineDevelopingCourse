@@ -18,9 +18,25 @@ namespace GameEngine
 		m_renderThread = std::make_unique<Render::RenderThread>();
 
 		// How many objects do we want to create
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < 100; ++i)
 		{
-			m_Objects.push_back(new GameObject());
+			Math::Vector3f SpawnPos = Math::Vector3f((float)(i % 10) * 5.0f, 0.0f, (float)(i / 10) * 5.0f);
+
+			// Randomly selecting object type
+			int ObjectType = rand() % 3;
+			if (ObjectType == 0)
+			{
+				m_Objects.push_back(new SinusGameObject(SpawnPos));
+			}
+			if (ObjectType == 1)
+			{
+				m_Objects.push_back(new GravityGameObject(SpawnPos));
+			}
+			if (ObjectType == 2)
+			{
+				m_Objects.push_back(new ControlGameObject(SpawnPos));
+			}
+
 			Render::RenderObject** renderObject = m_Objects.back()->GetRenderObjectRef();
 			m_renderThread->EnqueueCommand(Render::ERC::CreateRenderObject, RenderCore::DefaultGeometry::Cube(), renderObject);
 		}
@@ -29,6 +45,26 @@ namespace GameEngine
 		Core::g_InputHandler->RegisterCallback("GoBack", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetViewDir()); });
 		Core::g_InputHandler->RegisterCallback("GoRight", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetRightDir()); });
 		Core::g_InputHandler->RegisterCallback("GoLeft", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetRightDir()); });
+
+		// Arrows control for cubes
+		Core::g_InputHandler->RegisterCallback("CubeGoUp", [&]() {
+			for (int i = 0; i < m_Objects.size(); ++i)
+			{
+				if (dynamic_cast<ControlGameObject*>(m_Objects[i]))
+				{
+					m_Objects[i]->SetSpeed(Math::Vector3f(0.0f, 1.0f, 0.0f));
+				}
+			}
+			});
+		Core::g_InputHandler->RegisterCallback("CubeGoDown", [&]() {
+			for (int i = 0; i < m_Objects.size(); ++i)
+			{
+				if (dynamic_cast<ControlGameObject*>(m_Objects[i]))
+				{
+					m_Objects[i]->SetSpeed(Math::Vector3f(0.0f, -1.0f, 0.0f));
+				}
+			}
+			});
 	}
 
 	void Game::Run()
@@ -60,23 +96,7 @@ namespace GameEngine
 	{
 		for (int i = 0; i < m_Objects.size(); ++i)
 		{
-			Math::Vector3f pos = m_Objects[i]->GetPosition();
-
-			// Showcase
-			if (i == 0)
-			{
-				pos.x += 0.5f * dt;
-			}
-			else if (i == 1)
-			{
-				pos.y -= 0.5f * dt;
-			}
-			else if (i == 2)
-			{
-				pos.x += 0.5f * dt;
-				pos.y -= 0.5f * dt;
-			}
-			m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
+			m_Objects[i]->Update(dt, m_renderThread->GetMainFrame());
 		}
 	}
 }
