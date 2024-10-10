@@ -17,7 +17,7 @@ void GameFramework::Init()
 	RegisterEcsPhysSystems(m_World);
 	RegisterEcsGunSystems(m_World);
 
-	flecs::entity cubeControl = m_World.entity()
+	flecs::entity cubeControl = m_World.entity("cubeControl")
 		.set(Position{ Math::Vector3f(-2.f, 0.f, 0.f) })
 		.set(Velocity{ Math::Vector3f(0.f, 0.f, 0.f) })
 		.set(Speed{ 10.f })
@@ -30,7 +30,7 @@ void GameFramework::Init()
 		.set(RenderObjectPtr{ new Render::RenderObject() })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 
-	flecs::entity cubeMoving = m_World.entity()
+	flecs::entity cubeMoving = m_World.entity("cubeMoving")
 		.set(Position{ Math::Vector3f(2.f, 0.f, 0.f) })
 		.set(Velocity{ Math::Vector3f(0.f, 3.f, 0.f) })
 		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
@@ -39,7 +39,7 @@ void GameFramework::Init()
 		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(RenderObjectPtr{ new Render::RenderObject() });
 
-	flecs::entity cubeTarget = m_World.entity()
+	flecs::entity cubeTarget = m_World.entity("cubeTarget")
 		.set(Position{ Math::Vector3f(2.f, 0.f, 5.f) })
 		.set(Velocity{ Math::Vector3f(0.f, 3.f, 0.f) })
 		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
@@ -47,15 +47,16 @@ void GameFramework::Init()
 		.set(Bounciness{ 1.f })
 		.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(RenderObjectPtr{ new Render::RenderObject() })
+		.set(TimeToLive{ 3.0f })
 		.set(Target());
 
-	flecs::entity camera = m_World.entity()
+	flecs::entity camera = m_World.entity("camera")
 		.set(Position{ Math::Vector3f(0.0f, 12.0f, -10.0f) })
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 
-	flecs::entity gun = m_World.entity()
+	flecs::entity gun = m_World.entity("gun")
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
 		.set(MagazineCapacity{ 5 })

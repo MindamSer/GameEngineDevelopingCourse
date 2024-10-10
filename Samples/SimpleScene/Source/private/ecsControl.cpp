@@ -26,6 +26,9 @@ namespace GameEngine
 
 void RegisterEcsControlSystems(flecs::world& world)
 {
+	static flecs::query<const Position, TimeToLive, Target> q = world.query<const Position, TimeToLive, Target>();
+	static flecs::query<Magazine> mags = world.query<Magazine>();
+
 	world.system<Position, CameraPtr, const Speed, const ControllerPtr>()
 		.each([&](flecs::entity e, Position& position, CameraPtr& camera, const Speed& speed, const ControllerPtr& controller)
 	{
@@ -93,20 +96,25 @@ void RegisterEcsControlSystems(flecs::world& world)
 		}
 	});
 
-	//world.system<const Position, TimeToLive, Bullet>()
-	//	.each([&](const Position& bul_pos, TimeToLive& bul_ttl, Bullet)
-	//		{
-	//			flecs::query<const Position, TimeToLive, Target> q =
-	//				world.query<const Position, TimeToLive, Target>();
-	//			q.each([&bul_pos, &bul_ttl](const Position& tar_pos, TimeToLive& tar_ttl, Target) {
-	//				if ((bul_pos.value.x - tar_pos.value.x) * (bul_pos.value.x - tar_pos.value.x) +
-	//					(bul_pos.value.y - tar_pos.value.y) * (bul_pos.value.y - tar_pos.value.y) +
-	//					(bul_pos.value.z - tar_pos.value.z) * (bul_pos.value.z - tar_pos.value.z) < 0.25f)
-	//				{
-	//					bul_ttl.value = -1.f;
-	//					tar_ttl.value = -1.f;
-	//				}
-	//				});
-	//		});
+	world.system<const Position, TimeToLive, Bullet>()
+		.each([&](const Position& bul_pos, TimeToLive& bul_ttl, Bullet)
+			{
+				q.each([&](const Position& tar_pos, TimeToLive& tar_ttl, Target) 
+					{
+						if (bul_ttl.value > 0.f &&
+							(bul_pos.value.x - tar_pos.value.x) * (bul_pos.value.x - tar_pos.value.x) +
+							(bul_pos.value.y - tar_pos.value.y) * (bul_pos.value.y - tar_pos.value.y) +
+							(bul_pos.value.z - tar_pos.value.z) * (bul_pos.value.z - tar_pos.value.z) < 1.f)
+						{
+							bul_ttl.value = -1.f;
+							tar_ttl.value = -1.f;
+
+							mags.each([&](Magazine& mag)
+								{
+									mag.value += 3;
+								});
+						}
+					});
+			});
 }
 
