@@ -2,12 +2,27 @@
 #include <ecsControl.h>
 #include <ECS/ecsSystems.h>
 #include <ecsPhys.h>
+#include <ecsGun.h>
+#include <ecsMesh.h>
+#include <RenderObject.h>
 #include <flecs.h>
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
 
 using namespace GameEngine;
+
+namespace GameEngine
+{
+	namespace RenderCore
+	{
+		namespace DefaultGeometry
+		{
+			Geometry::Ptr Cube();
+			Geometry::Ptr Ocrahedron();
+		}
+	}
+}
 
 void RegisterEcsControlSystems(flecs::world& world)
 {
@@ -47,5 +62,51 @@ void RegisterEcsControlSystems(flecs::world& world)
 			}
 		}
 	});
+
+	world.system<const CameraPtr, const ControllerPtr, const MagazineCapacity, Magazine, ShootColldown, ReloadColldown>()
+		.each([&](const CameraPtr& camera, const ControllerPtr& controller, const MagazineCapacity& magazineCap, Magazine& magazine, ShootColldown& shootCD, ReloadColldown& reloadCD)
+	{
+		if (reloadCD.value < 0.f)
+		{
+			if (controller.ptr->IsPressed("Shoot") && shootCD.value < 0.f)
+			{
+				shootCD.value = 0.5f;
+				--magazine.value;
+				flecs::entity bullet = world.entity()
+					.set(Position{ camera.ptr->GetPosition() + camera.ptr->GetViewDir() * 1.f })
+					.set(Velocity{ camera.ptr->GetViewDir() * 20.f })
+					.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
+					.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
+					.set(Bounciness{ 0.5f })
+					.set(GeometryPtr{ RenderCore::DefaultGeometry::Ocrahedron() })
+					.set(RenderObjectPtr{ new Render::RenderObject() })
+					.set(TimeToLive{ 3.0f })
+					.set(TimeToLiveStart{ false })
+					.set(Bullet());
+			}
+
+			if (magazine.value <= 0)
+			{
+				reloadCD.value = 3.0f;
+				magazine.value = magazineCap.value;
+			}
+		}
+	});
+
+	//world.system<const Position, TimeToLive, Bullet>()
+	//	.each([&](const Position& bul_pos, TimeToLive& bul_ttl, Bullet)
+	//		{
+	//			flecs::query<const Position, TimeToLive, Target> q =
+	//				world.query<const Position, TimeToLive, Target>();
+	//			q.each([&bul_pos, &bul_ttl](const Position& tar_pos, TimeToLive& tar_ttl, Target) {
+	//				if ((bul_pos.value.x - tar_pos.value.x) * (bul_pos.value.x - tar_pos.value.x) +
+	//					(bul_pos.value.y - tar_pos.value.y) * (bul_pos.value.y - tar_pos.value.y) +
+	//					(bul_pos.value.z - tar_pos.value.z) * (bul_pos.value.z - tar_pos.value.z) < 0.25f)
+	//				{
+	//					bul_ttl.value = -1.f;
+	//					tar_ttl.value = -1.f;
+	//				}
+	//				});
+	//		});
 }
 

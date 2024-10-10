@@ -1,5 +1,6 @@
 #include <ecsMesh.h>
 #include <ecsPhys.h>
+#include <ecsGun.h>
 #include <ECS/ecsSystems.h>
 #include <flecs.h>
 #include <Geometry.h>
@@ -23,6 +24,16 @@ void RegisterEcsMeshSystems(flecs::world& world)
 		.each([&](RenderObjectPtr& renderObject, const Position& position)
 	{
 		renderObject.ptr->SetPosition(position.value, renderThread->ptr->GetMainFrame());
+	});
+
+	world.system<RenderObjectPtr, TimeToLive>()
+		.each([&](flecs::entity e, RenderObjectPtr& renderObject, TimeToLive& ttl)
+	{
+		if (ttl.value <= 0.f)
+		{
+			renderThread->ptr->EnqueueCommand(Render::ERC::DeleteRenderObject, GeometryPtr().ptr, renderObject.ptr);
+			e.destruct();
+		}
 	});
 }
 
