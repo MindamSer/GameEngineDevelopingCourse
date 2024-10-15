@@ -39,9 +39,19 @@ void GameFramework::Init()
 		.set(Velocity{ 0.f, 3.f, 0.f })
 		.set(Gravity{ 0.f, -9.8065f, 0.f })
 		.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
-		.set(Bounciness{ 1.f })
+		.set(Bounciness{ 1.f }) 
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
+
+	flecs::entity cubeTarget = m_World.entity()
+		.set(Position{ 2.f, 7.f, 4.f })
+		.set(Velocity{ 0.f, 5.f, 0.f })
+		.set(Gravity{ 0.f, -9.8065f, 0.f })
+		.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
+		.set(Bounciness{ 0.5f })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+		.set(Collider());
 
 	flecs::entity camera = m_World.entity()
 		.set(Position{ 0.0f, 12.0f, -10.0f })
@@ -74,6 +84,9 @@ void GameFramework::RegisterComponents()
 	ECS_META_COMPONENT(m_World, Magazine);
 	ECS_META_COMPONENT(m_World, ShootCooldown);
 	ECS_META_COMPONENT(m_World, ReloadCooldown);
+
+	ECS_META_COMPONENT(m_World, Collider);
+	ECS_META_COMPONENT(m_World, JumpOnCollision);
 }
 
 void GameFramework::RegisterSystems()

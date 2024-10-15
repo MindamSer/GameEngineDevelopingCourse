@@ -87,7 +87,8 @@ void RegisterEcsControlSystems(flecs::world& world)
 							.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Ocrahedron() })
 							.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
 							.set(TimeToLive{ false, 2.f })
-							.set(DieOnGround{ false });
+							.set(DieOnGround())
+							.set(Collider());
 					}
 
 					if (mag.value <= 0)

@@ -34,3 +34,6 @@ ECS_STRUCT(ReloadCooldown,
 	float max_value;
 	float value;
 });
+
+ECS_STRUCT(Collider, { bool value; });
+ECS_STRUCT(JumpOnCollision, { bool value; });
