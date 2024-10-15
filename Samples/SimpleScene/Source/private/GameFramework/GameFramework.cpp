@@ -7,6 +7,7 @@
 #include <ecsControl.h>
 #include <ecsMesh.h>
 #include <ecsPhys.h>
+#include <ecsShooting.h>
 #include <ECS/ecsSystems.h>
 #include <GameFramework/GameFramework.h>
 #include <Input/Controller.h>
@@ -47,6 +48,13 @@ void GameFramework::Init()
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+
+	flecs::entity gun = m_World.entity()
+		.set(CameraPtr{ Core::g_MainCamera })
+		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
+		.set(Magazine{ 5, 5 })
+		.set(ShootCooldown{ 0.5f, 0.f })
+		.set(ReloadCooldown{ 3.0f, 0.f });
 }
 
 void GameFramework::RegisterComponents()
@@ -60,6 +68,12 @@ void GameFramework::RegisterComponents()
 	ECS_META_COMPONENT(m_World, ShiverAmount);
 	ECS_META_COMPONENT(m_World, FrictionAmount);
 	ECS_META_COMPONENT(m_World, Speed);
+
+	ECS_META_COMPONENT(m_World, TimeToLive);
+	ECS_META_COMPONENT(m_World, DieOnGround);
+	ECS_META_COMPONENT(m_World, Magazine);
+	ECS_META_COMPONENT(m_World, ShootCooldown);
+	ECS_META_COMPONENT(m_World, ReloadCooldown);
 }
 
 void GameFramework::RegisterSystems()

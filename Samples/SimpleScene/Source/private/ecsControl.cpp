@@ -6,6 +6,21 @@
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
+#include <ecsShooting.h>
+#include <ecsMesh.h>
+#include <RenderObject.h>
+
+namespace GameEngine
+{
+	namespace RenderCore
+	{
+		namespace DefaultGeometry
+		{
+			Geometry::Ptr Cube();
+			Geometry::Ptr Ocrahedron();
+		}
+	}
+}
 
 using namespace GameEngine;
 
@@ -49,5 +64,38 @@ void RegisterEcsControlSystems(flecs::world& world)
 			}
 		}
 	});
+
+	world.system<const CameraPtr, const ControllerPtr, Magazine, ShootCooldown, ReloadCooldown>()
+		.each([&](const CameraPtr& camera, const ControllerPtr& controller, Magazine& mag, ShootCooldown& shootCD, ReloadCooldown& relCD)
+			{
+				if (relCD.value <= 0.f)
+				{
+					if (controller.ptr->IsPressed("Shoot") && shootCD.value <= 0.f)
+					{
+						shootCD.value = shootCD.max_value;
+						--mag.value;
+
+						Math::Vector3f spawn_pos = camera.ptr->GetPosition() + camera.ptr->GetViewDir() * 1.f;
+						Math::Vector3f spawn_vel = camera.ptr->GetViewDir() * 20.f;
+
+						flecs::entity bullet = world.entity()
+							.set(Position{ spawn_pos.x, spawn_pos.y, spawn_pos.z })
+							.set(Velocity{ spawn_vel.x, spawn_vel.y, spawn_vel.z })
+							.set(Gravity{ 0.f, -9.8065f, 0.f })
+							.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
+							.set(Bounciness{ 0.5f })
+							.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Ocrahedron() })
+							.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
+							.set(TimeToLive{ false, 2.f })
+							.set(DieOnGround{ false });
+					}
+
+					if (mag.value <= 0)
+					{
+						relCD.value = relCD.max_value;
+						mag.value = mag.max_value;
+					}
+				}
+			});
 }
 
