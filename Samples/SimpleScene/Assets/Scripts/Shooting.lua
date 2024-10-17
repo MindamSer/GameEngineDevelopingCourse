@@ -40,8 +40,12 @@ end
 
 local function CollisionSystem(it)
 	local pos_arr, coll_arr = ecs.columns(it)
-	local dist2 = 0
 	for i = 1, it.count do
+		coll_arr[i].value = false
+	end
+	
+	local dist2 = 0
+	for i = 1, it.count - 1 do
 		for j = i + 1, it.count do
 			dist2 =	
 				(pos_arr[i].x - pos_arr[j].x) * (pos_arr[i].x - pos_arr[j].x) +
@@ -50,9 +54,6 @@ local function CollisionSystem(it)
 			if dist2 < 1. then
 				coll_arr[i].value = true
 				coll_arr[j].value = true
-			else
-				coll_arr[i].value = false
-				coll_arr[j].value = false
 			end
 		end
 	end
@@ -61,7 +62,7 @@ end
 local function JumpOnCollisionSystem(it)
     for vel, coll, joc, ent in ecs.each(it) do
 		if coll.value then
-			vel.y = 0.
+			vel.y = 20.
 		end
     end
 end

@@ -51,7 +51,8 @@ void GameFramework::Init()
 		.set(Bounciness{ 0.5f })
 		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
 		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() })
-		.set(Collider());
+		.set(Collider())
+		.set(JumpOnCollision());
 
 	flecs::entity camera = m_World.entity()
 		.set(Position{ 0.0f, 12.0f, -10.0f })
