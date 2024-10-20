@@ -53,6 +53,32 @@ namespace GameEngine
 				
 				return new Geometry((Geometry::VertexType*)vertices.begin(), vertices.size(), (Geometry::IndexType*)indices.begin(), indices.size());
 			}
+
+			Geometry* Ocrahedron()
+			{
+				constexpr Core::array<Geometry::VertexType, 6> vertices =
+				{
+					Math::Vector3f(+0.1f, +0.0f, +0.0f),
+					Math::Vector3f(-0.1f, +0.0f, +0.0f),
+					Math::Vector3f(+0.0f, +0.1f, +0.0f),
+					Math::Vector3f(+0.0f, -0.1f, +0.0f),
+					Math::Vector3f(+0.0f, +0.0f, +0.1f),
+					Math::Vector3f(+0.0f, +0.0f, -0.1f)
+				};
+				constexpr Core::array<Geometry::IndexType, 24> indices =
+				{
+					0, 2, 4,
+					4, 2, 1,
+					1, 2, 5,
+					5, 2, 0,
+					0, 3, 5,
+					5, 3, 1,
+					1, 3, 4,
+					4, 3, 0
+				};
+
+				return new Geometry((Geometry::VertexType*)vertices.begin(), vertices.size(), (Geometry::IndexType*)indices.begin(), indices.size());
+			}
 		}
 	}
 }

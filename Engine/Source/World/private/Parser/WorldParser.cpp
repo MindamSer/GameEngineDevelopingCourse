@@ -10,6 +10,7 @@ namespace GameEngine::World
 	std::unordered_map<std::string, uint64_t> WorldParser::s_CustomComponents =
 	{
 		{"Cube", reinterpret_cast<uint64_t>(RenderCore::DefaultGeometry::Cube())},
+		{"Ocrahedron", reinterpret_cast<uint64_t>(RenderCore::DefaultGeometry::Ocrahedron())},
 	};
 
 	Level WorldParser::ParseLevel(const std::string& xmlPath)

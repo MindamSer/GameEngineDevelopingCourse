@@ -9,6 +9,8 @@
 #include <RenderObject.h>
 #include <GameWorld.h>
 
+#include <ecsCollisions.h>
+
 using namespace GameEngine;
 
 void GameFramework::Init()
@@ -71,6 +73,15 @@ void GameFramework::RegisterComponentsReflection()
 
 	m_World.component<JumpSpeed>()
 		.member<float>("value");
+
+
+
+	m_World.component<TimeToLive>()
+		.member<bool>("start")
+		.member<float>("value");
+
+	m_World.component<DieOnGround>()
+		.member<bool>("value");
 }
 
 void GameFramework::RegisterSystems()
