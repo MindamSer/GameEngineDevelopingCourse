@@ -27,7 +27,7 @@
    />
    
    <entity 
-   Name="TTLEntity" 
+   Name="Bullet" 
    Position="2.0,20.0,4.0" 
    Velocity="0.0,3.0,0.0" 
    Gravity="0.0,-9.8,0.0" 
@@ -36,6 +36,26 @@
    GeometryPtr="Ocrahedron"
    TimeToLive="0, 3.0"
    DieOnGround="0"
+   Collider="0"
+   JumpOnCollision="0"
+   />
+   
+   <entity 
+   Name="TragetCube1" 
+   Position="2.0,10.0,4.0" 
+   Velocity="0.0,0.0,0.0"
+   GeometryPtr="Cube"
+   Collider="0"
+   WooshOnCollision="0"
+   />
+   
+   <entity 
+   Name="TragetCube2" 
+   Position="2.0,6.0,4.0"  
+   Velocity="0.0,0.0,0.0"
+   GeometryPtr="Cube"
+   Collider="0"
+   WooshOnCollision="0"
    />
    
 </level>

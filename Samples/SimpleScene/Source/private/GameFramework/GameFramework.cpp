@@ -82,6 +82,17 @@ void GameFramework::RegisterComponentsReflection()
 
 	m_World.component<DieOnGround>()
 		.member<bool>("value");
+
+
+
+	m_World.component<Collider>()
+		.member<bool>("value");
+
+	m_World.component<JumpOnCollision>()
+		.member<bool>("value");
+
+	m_World.component<WooshOnCollision>()
+		.member<bool>("value");
 }
 
 void GameFramework::RegisterSystems()
